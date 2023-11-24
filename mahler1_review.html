@@ -16,24 +16,44 @@
 
       // 各行についてループ処理
       for (var i = 1; i < rows.length; i++) {
+        //探索の前に全ての文字色を黒に設定
+        var replacePattern = new RegExp(
+          '(<span style="color:red;">)(.*?)(</span>)',
+          "g"
+        );
+        rows[i].cells[2].innerHTML = rows[i].cells[2].innerHTML.replace(
+          replacePattern,
+          "$2"
+        );
+
         // 検索ワードがすべて含まれているかチェック
         var match = true;
+        var n = 0;
         for (var j = 0; j < words.length; j++) {
           //console.log("check: " + words[j]);
+
           if (words[j] == "ALL") {
             match = true;
             break;
           } else if (!rows[i].cells[2].innerHTML.includes(words[j])) {
-            match = false;
+            if (n == 0) {
+              match = false;
+            }
           } else {
             if (rows[i].cells[2].innerHTML.includes("除く" + words[j])) {
               match = false;
               console.log("除く: row " + i);
               break;
             }
+            n = 1;
             match = true;
             console.log("row " + i + " match : " + words[j]);
-            break;
+            var cellHTML = rows[i].cells[2].innerHTML;
+            var replacePattern = new RegExp("(" + words[j] + ")", "g");
+            rows[i].cells[2].innerHTML = cellHTML.replace(
+              replacePattern,
+              '<span style="color:red;">$1</span>'
+            );
           }
         }
 
